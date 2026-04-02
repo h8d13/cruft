@@ -12,6 +12,6 @@ repos:
         args: [src/, main]
 
   - repo: https://github.com/h8d13/cruft
-    rev: 090c411b948961a73dba4d21d5f04e3822f9acb2
+    rev: 15f91f01cce2e36a698eba5cb9da7e73d403130d
     hooks:
       - id: duper
