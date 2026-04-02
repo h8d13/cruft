@@ -25,9 +25,20 @@ pre-commit autoupdate
 And to adapt to your paths and rules `ruff.toml`. 
 I've purposely ommited the `[format]` block as I do not like a tool touching my code too much.
 
+## Manual Usage: 
+
+Let's say you where using this on a larger codebase:
+
+```bash
+# PYTHON_PATH main <rel_path> <output_path>
+
+# Example
+python3 main ../archinstall duper_$(date "+%T").txt
+```
+
 ## References: 
 
 For more info: 
 
 - https://docs.astral.sh/ruff/formatter/
-- https://github.com/h8d13/cruft
+- https://github.com/jendrikseipp/vulture

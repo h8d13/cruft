@@ -4,13 +4,13 @@ DUPER Duplicate & near-duplicate code detector
 
 A couple of notable features:
 - Respect gitignores glob
-- Fuzzy matching
 - Skip binary files
 - Skip (.something) files/dirs
+- Skip comments
 
+- Fuzzy matching
 """
 import contextlib
-import hashlib
 import re
 from difflib import SequenceMatcher
 from pathlib import Path
@@ -239,7 +239,7 @@ def norm_fuzzy(line):
     return s
 
 def hash_lines(lines):
-    return hashlib.sha256("\n".join(lines).encode()).hexdigest()
+    return hash(tuple(lines))
 
 def similarity(a_lines, b_lines):
     a = " ".join(line.strip() for line in a_lines)
