@@ -2,20 +2,20 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent / 'src'))
+sys.path.insert(0, str(Path(__file__).parent / "src"))
 
-from duper import respect_gitignore, collect_files, scan, RESET, BOLD, DIM, RED, YELLOW, GREEN
+from duper import respect_gitignore, collect_files, scan, RESET, RED
 from report import report
 
 ## input path       ## use '.' if none provided
-root     = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else Path.cwd()
+root = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else Path.cwd()
 ## output dir       ## use default name if none provided
 out_path = Path(sys.argv[2]) if len(sys.argv) > 2 else Path.cwd() / "scan_report.txt"
 
 if not root.is_dir():
     sys.exit("{}error:{} '{}' is not a directory".format(RED, RESET, root))
 
-files      = collect_files(root, spec := respect_gitignore(root))
+files = collect_files(root, spec := respect_gitignore(root))
 print("\nScanning {} ({} files) ...".format(root, len(files)))
 results, warnings = scan(files)
 report(results, root, len(files), out_path, warnings)
