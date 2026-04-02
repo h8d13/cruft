@@ -4,3 +4,10 @@
 
 It is meant to be a boilerplate to use on new Python/PyPy projects or check existing codebases.
 
+---
+
+Why they work well together: 
+
+1. `ruff` as the main coding style + rules enabler + auto fixing, etc
+2. `vulture` as a further introspection for any unused code (with some false positives, that can be whitelisted).
+3. `cruft` is purely a direct/fuzzy compare that reports lots of false positives BUT also real opportunities to refactor.
