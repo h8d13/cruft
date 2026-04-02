@@ -8,7 +8,7 @@ sys.path.insert(0, str(Path(__file__).parent / "src"))
 from duper import RED, RESET, collect_files, respect_gitignore, scan
 from report import report
 
-rep_n = f'report_{datetime.now().strftime("%H:%M:%S")}'
+rep_n = f'report_{datetime.now().strftime("%H:%M:%S")}.txt'
 
 ## input path       ## use '.' if none provided
 root = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else Path.cwd()
