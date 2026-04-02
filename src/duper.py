@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
 DUPER Duplicate & near-duplicate code detector
-Usage:  pypy3 DUPER [relative/path]
 
 A couple of notable features:
 - Respect gitignores glob
