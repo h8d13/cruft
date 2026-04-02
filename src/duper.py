@@ -9,7 +9,7 @@ A couple of notable features:
 - Skip (.something) files/dirs
 
 """
-
+import contextlib
 import hashlib
 import re
 from difflib import SequenceMatcher
@@ -55,7 +55,6 @@ SKIP_DIRS = {
     "dist",
     "build",
 }  # also respect gitignore if found in the target path
-
 
 def respect_gitignore(root):
     gitignore = Path(root) / ".gitignore"
@@ -103,10 +102,8 @@ def respect_gitignore(root):
         anchored = "/" in line or line.startswith("/")
         if line.startswith("/"):
             line = line[1:]
-        try:
+        with contextlib.suppress(re.error):
             rules.append((negated, dir_only, _to_re(line, anchored)))
-        except re.error:
-            pass
 
     def matches(path):
         try:
@@ -124,9 +121,7 @@ def respect_gitignore(root):
 
     return matches
 
-
 # ANSI
-
 ## States
 RESET = "\033[0m"
 BOLD = "\033[1m"
@@ -135,7 +130,6 @@ DIM = "\033[2m"
 RED = "\033[31m"
 YELLOW = "\033[33m"
 GREEN = "\033[32m"
-
 
 # STRUCS
 class Occurrence:
@@ -171,12 +165,11 @@ class DuplicateGroup:
     def preview(self, max_lines=5):
         snippet = self.lines[:max_lines]
         tail = (
-            "\n    ... ({} more lines)".format(self.line_count - max_lines)
+            f"\n    ... ({self.line_count - max_lines} more lines)"
             if self.line_count > max_lines
             else ""
         )
         return "    " + "    ".join(snippet).rstrip() + tail
-
 
 # COMM
 _LINE_COMMENT_PREFIXES = ("//", "#", "--", ";", "%")
@@ -188,7 +181,6 @@ _BLOCK_MARKERS = [
     ('"""', '"""'),
     ("'''", "'''"),
 ]
-
 
 def strip_comments(raw_lines):
     result = []
@@ -225,23 +217,19 @@ def strip_comments(raw_lines):
                 clean = clean[:earliest_pos]
                 in_block = earliest_close
                 break
-            else:
-                clean = (
-                    clean[:earliest_pos] + after_open[close_idx + len(earliest_close) :]
-                )
+            clean = (
+                clean[:earliest_pos] + after_open[close_idx + len(earliest_close) :]
+            )
         result.append(clean)
     return result
-
 
 # NORM
 def norm_exact(line):
     return line.strip()
 
-
 _STR_RE = re.compile(r'(["\'])(?:\\.|[^\\])*?\1')
 _NUM_RE = re.compile(r"\b\d+(\.\d+)?\b")
 _WORD_RE = re.compile(r"\b[A-Za-z_]\w*\b")
-
 
 def norm_fuzzy(line):
     s = line.strip()
@@ -250,16 +238,13 @@ def norm_fuzzy(line):
     s = _WORD_RE.sub("ID", s)
     return s
 
-
 def hash_lines(lines):
     return hashlib.sha256("\n".join(lines).encode()).hexdigest()
-
 
 def similarity(a_lines, b_lines):
     a = " ".join(line.strip() for line in a_lines)
     b = " ".join(line.strip() for line in b_lines)
     return SequenceMatcher(None, a, b).ratio()
-
 
 # SCAN
 def is_binary(path):
@@ -267,7 +252,6 @@ def is_binary(path):
         return b"\x00" in path.read_bytes()[:8192]
     except OSError:
         return True
-
 
 def collect_files(root, spec=None):
     files = []
@@ -290,7 +274,6 @@ def collect_files(root, spec=None):
             files.append(path)
     return sorted(files)
 
-
 def scan(files):
     exact_index = {}  # exact_hash  -> DuplicateGroup
     fuzzy_index = {}  # fuzzy_hash  -> DuplicateGroup
@@ -304,7 +287,7 @@ def scan(files):
         bar = "\u2588" * filled + "\u2591" * (25 - filled)
         label = path.name[:35].ljust(35)
         print(
-            "\r  [{}] {:5.1f}%  {}{}{}".format(bar, pct, GREEN, label, RESET),
+            f"\r  [{bar}] {pct:5.1f}%  {GREEN}{label}{RESET}",
             end="",
             flush=True,
         )
@@ -381,7 +364,7 @@ def scan(files):
             new_line_idx = occ0.end_line  # end_line is 1-based; index = end_line
             if new_line_idx >= len(file_raw):
                 break
-            g.lines = g.lines + [file_raw[new_line_idx]]
+            g.lines = [*g.lines, file_raw[new_line_idx]]
             for occ in g.occurrences:
                 occ.end_line += 1
             absorbed.add(id(neighbour))
