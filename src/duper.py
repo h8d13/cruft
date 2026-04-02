@@ -35,6 +35,15 @@ EXTENSIONS = {
     ".php",
     ".cs",
 }  # else any valid text file BUT skip binaries
+# and skip the following 
+SKIP_FILES = {
+    "LICENSE",
+    "LICENCE",
+    "CHANGELOG",
+    "NOTICE",
+    "AUTHORS",
+    "COPYING",
+}
 SKIP_DIRS = {
     ".git",
     "__pycache__",
@@ -46,7 +55,6 @@ SKIP_DIRS = {
     "dist",
     "build",
 }  # also respect gitignore if found in the target path
-
 
 def respect_gitignore(root):
     gitignore = Path(root) / ".gitignore"
@@ -264,6 +272,8 @@ def collect_files(root, spec=None):
     files = []
     for path in root.rglob("*"):
         if any(part in SKIP_DIRS for part in path.parts):
+            continue
+        if path.stem in SKIP_FILES: # note use stem so that we catch extensions
             continue
         if spec and spec(path):
             continue
