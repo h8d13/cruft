@@ -326,7 +326,7 @@ def scan(files):
             f_chunk = fuzzy_norm[start : start + MIN_LINES]
             block = raw[start : start + MIN_LINES]  # original lines for display
 
-            if sum(bool(line) for line in e_chunk) < MIN_LINES * 0.6:
+            if not e_chunk[0] or sum(bool(line) for line in e_chunk) < MIN_LINES * 0.6:
                 continue
 
             eh = hash_lines(e_chunk)
