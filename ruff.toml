@@ -1,13 +1,23 @@
 line-length = 88
 indent-width = 4
 
-[format]
-indent-style = "space"
-quote-style = "double"
-
 [lint]
 select = [
-    "E",   # pycodestyle errors
-    "F",   # pyflakes
-    "W",   # pycodestyle warnings
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "F",     # pyflakes
+    "B",     # flake8-bugbear (real bugs: mutable defaults, loop issues)
+    "C4",    # flake8-comprehensions (simpler list/dict/set comprehensions)
+    "SIM",   # flake8-simplify (unnecessary branches, merges)
+    "UP",    # pyupgrade (modernize syntax)
+    "PERF",  # perflint (performance anti-patterns)
+    "RUF",   # ruff-specific rules
+    "I",     # isort (import order)
+    "RET",   # flake8-return (redundant return logic)
+]
+ignore = [
+    "E302",   # expected 2 blank lines - we prefer 1
+    "E741",   # ambiguous variable name - too noisy for short loops
+    "SIM108", # ternary instead of if/else - we use both intentionally
+    "RET504", # unnecessary assign before return - sometimes clearer
 ]

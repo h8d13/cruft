@@ -4,7 +4,6 @@ repos:
     hooks:
       - id: ruff
         args: [--fix]
-      - id: ruff-format
 
   - repo: https://github.com/jendrikseipp/vulture
     rev: v2.16
@@ -13,6 +12,6 @@ repos:
         args: [src/, main]
 
   - repo: https://github.com/h8d13/cruft
-    rev: eb3556d9d010ce6f8a2db86b722a8f0356de70c3
+    rev: 090c411b948961a73dba4d21d5f04e3822f9acb2
     hooks:
       - id: duper
