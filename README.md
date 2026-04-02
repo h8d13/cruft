@@ -2,7 +2,7 @@
 
 > Cruft is a lightweight duplicate code finder that ships with `ruff` and `vulture` basic config.
 
-It is meant to be a boilerplate to use on new Python/PyPy projects or check existing codebases.
+It is meant to be a boilerplate to use on new Python & PyPy projects or check existing codebases.
 
 ---
 
@@ -17,7 +17,7 @@ Why they work well together:
 ## Install:
 
 All you need is the example `.pre-commit-config.yaml`
-```
+```bash
 pre-commit install
 pre-commit autoupdate
 ```
