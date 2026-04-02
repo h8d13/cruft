@@ -1,18 +1,18 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.2
+    rev: v0.15.8
     hooks:
       - id: ruff
         args: [--fix]
       - id: ruff-format
 
   - repo: https://github.com/jendrikseipp/vulture
-    rev: v2.14
+    rev: v2.16
     hooks:
       - id: vulture
         args: [src/, main]
 
   - repo: https://github.com/h8d13/cruft
-    rev: master
+    rev: eb3556d9d010ce6f8a2db86b722a8f0356de70c3
     hooks:
       - id: duper

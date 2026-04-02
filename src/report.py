@@ -5,9 +5,15 @@ TOP_N = 10  # to display in terminal output
 bar = "─" * 70
 
 
+def _format_occurrences(g, pre="", post=""):
+    return [
+        "      {}{}:{}{}".format(pre, occ.file, occ.start_line, post)
+        for occ in g.occurrences
+    ]
+
+
 def format_group(i, g):
-    lines = []
-    lines.append(
+    lines = [
         "#{:>2}  {}-line block  x{}  {} wasted lines  {:.0f}%  {}".format(
             i,
             g.line_count,
@@ -16,9 +22,8 @@ def format_group(i, g):
             g.similarity * 100,
             g.kind,
         )
-    )
-    for occ in g.occurrences:
-        lines.append("      {}:{}".format(occ.file, occ.start_line))
+    ]
+    lines.extend(_format_occurrences(g))
     lines.append("")
     lines.append(g.preview())
     lines.append("─" * 70)
@@ -27,12 +32,6 @@ def format_group(i, g):
 
 def report(results, root, total_files, out_path, warnings=None):
     total_wasted = sum(g.wasted_lines for g in results)
-
-    def score_colour(s):
-        return GREEN if s >= 0.99 else YELLOW if s >= 0.85 else RED
-
-    def wasted_colour(w):
-        return RED if w >= 30 else YELLOW if w >= 10 else GREEN
 
     for path, e in warnings or []:
         print("{}[warn]{} {}: {}".format(YELLOW, RESET, path, e), file=sys.stderr)
@@ -43,11 +42,8 @@ def report(results, root, total_files, out_path, warnings=None):
     print(bar)
     print("  Files scanned   : {}{}{}".format(GREEN, total_files, RESET))
     print("  Duplicate groups: {}{}{}".format(GREEN, len(results), RESET))
-    print(
-        "  Wasted lines    : {}{}{}".format(
-            wasted_colour(total_wasted), total_wasted, RESET
-        )
-    )
+    wasted_c = RED if total_wasted >= 30 else YELLOW if total_wasted >= 10 else GREEN
+    print("  Wasted lines    : {}{}{}".format(wasted_c, total_wasted, RESET))
     print("  Full report     : {}{}{}".format(GREEN, out_path, RESET))
     print(bar)
 
@@ -59,15 +55,19 @@ def report(results, root, total_files, out_path, warnings=None):
 
     # print top N to terminal with colour
     for i, g in enumerate(results[:TOP_N], 1):
+        sc = GREEN if g.similarity >= 0.99 else YELLOW if g.similarity >= 0.85 else RED
+        wc = RED if g.wasted_lines >= 30 else YELLOW if g.wasted_lines >= 10 else GREEN
         print(
-            "{}{}#{:>2}  {}-line block  x{}  {} wasted lines  {}{}{:.0f}%{}  {}{}{}".format(
+            (
+                "{}{}#{:>2}  {}-line block  x{}  {} wasted lines  {}{}{:.0f}%{}  {}{}{}"
+            ).format(
                 BOLD,
-                wasted_colour(g.wasted_lines),
+                wc,
                 i,
                 g.line_count,
                 len(g.occurrences),
                 g.wasted_lines,
-                score_colour(g.similarity),
+                sc,
                 BOLD,
                 g.similarity * 100,
                 RESET,
@@ -76,8 +76,8 @@ def report(results, root, total_files, out_path, warnings=None):
                 RESET,
             )
         )
-        for occ in g.occurrences:
-            print("      {}{}:{}{}".format(GREEN, occ.file, occ.start_line, RESET))
+        for line in _format_occurrences(g, GREEN, RESET):
+            print(line)
         print("\n{}{}{}\n{}\n".format(DIM, g.preview(), RESET, "─" * 70))
 
     if len(results) > TOP_N:
