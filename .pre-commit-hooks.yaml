@@ -1,0 +1,6 @@
+- id: duper
+  name: duper
+  entry: main
+  language: script
+  pass_filenames: false
+  always_run: true
